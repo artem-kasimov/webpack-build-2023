@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -6,6 +7,10 @@ const mode = process.env.NODE_ENV || 'development';
 const devMode = mode === 'development';
 const target = devMode ? 'web' : 'browserslist';
 const devtool = devMode ? 'source-map' : undefined;
+
+const pages = fs
+  .readdirSync(path.resolve(__dirname, 'src/pug/pages'))
+  .filter(fileName => fileName.endsWith('.pug'));
 
 module.exports = {
   mode,
@@ -25,13 +30,13 @@ module.exports = {
     filename: 'assets/js/[name].[contenthash].js',
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'index.html'),
-    }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'page.html'),
-      filename: 'page.html',
-    }),
+    ...pages.map(
+      page =>
+        new HtmlWebpackPlugin({
+          template: path.resolve(__dirname, 'src/pug/pages', page),
+          filename: page.replace('.pug', '.html'),
+        })
+    ),
     new MiniCssExtractPlugin({
       filename: 'assets/css/[name].[contenthash].css',
     }),
@@ -41,6 +46,10 @@ module.exports = {
       {
         test: /\.html$/i,
         loader: 'html-loader',
+      },
+      {
+        test: /\.pug$/i,
+        loader: 'pug-loader',
       },
       {
         test: /\.(c|sa|sc)ss$/i,
