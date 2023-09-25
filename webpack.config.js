@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const devMode = mode === 'development';
@@ -19,6 +20,7 @@ module.exports = {
   devServer: {
     open: true,
     hot: true,
+    watchFiles: 'src/**/*.pug',
   },
   entry: [
     //'@babel/polyfill',
@@ -26,10 +28,10 @@ module.exports = {
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    clean: true,
     filename: 'assets/js/[name].[contenthash].js',
   },
   plugins: [
+    new CleanWebpackPlugin(),
     ...pages.map(
       page =>
         new HtmlWebpackPlugin({
