@@ -18,9 +18,9 @@ module.exports = {
   target,
   devtool,
   devServer: {
+    watchFiles: './src/pug/**/*',
     open: true,
     hot: true,
-    watchFiles: 'src/**/*.pug',
   },
   entry: [
     //'@babel/polyfill',
@@ -46,10 +46,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.html$/i,
-        loader: 'html-loader',
-      },
-      {
         test: /\.pug$/i,
         loader: 'pug-loader',
       },
@@ -72,6 +68,11 @@ module.exports = {
       {
         test: /\.(jpe?g|png|webp|svg|gif)$/i,
         type: 'asset/resource',
+        generator: {
+          filename: content => {
+            return content.filename.replace('src/', '');
+          },
+        },
         use: [
           {
             loader: 'image-webpack-loader',
@@ -95,24 +96,24 @@ module.exports = {
             },
           },
         ],
-        generator: {
-          filename: 'assets/img/[name][ext]',
-        },
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/i,
+        test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/i,
         type: 'asset/resource',
         generator: {
           filename: 'assets/fonts/[name][ext]',
         },
       },
       {
-        test: /\.(?:js|mjs|cjs)$/i,
+        test: /\.(?:js|mjs|cjs|jsx)$/i,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [['@babel/preset-env', { targets: 'defaults' }]],
+            presets: [
+              ['@babel/preset-env', { targets: 'defaults' }],
+              ['@babel/preset-react'],
+            ],
           },
         },
       },
