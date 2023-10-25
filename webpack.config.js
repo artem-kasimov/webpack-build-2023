@@ -17,6 +17,9 @@ module.exports = {
   mode,
   target,
   devtool,
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
   devServer: {
     watchFiles: './src/pug/**/*',
     open: true,
@@ -32,6 +35,12 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
+    // ...pages.map(
+    //   page =>
+    //     new HtmlWebpackPlugin({
+    //       template: path.resolve(__dirname, 'src', page),
+    //     })
+    // ),
     ...pages.map(
       page =>
         new HtmlWebpackPlugin({
@@ -45,6 +54,10 @@ module.exports = {
   ],
   module: {
     rules: [
+      // {
+      //   test: /\.html$/i,
+      //   loader: 'html-loader',
+      // },
       {
         test: /\.pug$/i,
         loader: 'pug-loader',
@@ -112,7 +125,7 @@ module.exports = {
           options: {
             presets: [
               ['@babel/preset-env', { targets: 'defaults' }],
-              ['@babel/preset-react'],
+              ['@babel/preset-react', { runtime: 'automatic' }],
             ],
           },
         },
